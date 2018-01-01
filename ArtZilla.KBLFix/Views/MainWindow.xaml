@@ -1,0 +1,50 @@
+﻿<Window x:Class="ArtZilla.KBLFix.Views.MainWindow"
+				xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:Commands="clr-namespace:ArtZilla.KBLFix.Commands"
+				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				xmlns:local="clr-namespace:ArtZilla.KBLFix.Views"
+				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:tb="http://www.hardcodet.net/taskbar"
+				xmlns:vm="clr-namespace:ArtZilla.KBLFix.ViewModels"
+				Title="Фиксация раскладок"
+				Width="525"
+				Height="350"
+				d:DataContext="{d:DesignInstance vm:MainWindowViewModel, d:IsDesignTimeCreatable=True}"
+				mc:Ignorable="d">
+	<StackPanel>
+		<ToggleButton Margin="8,4"
+									Padding="4,2"
+									HorizontalAlignment="Left"
+									Content="Фиксация"
+									IsChecked="{Binding IsEnabled}" />
+
+		<Label Content="Список раскладок:" />
+
+		<ItemsControl ItemsSource="{Binding Layouts}">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate DataType="{x:Type vm:KeyboardLayoutViewModel}">
+					<Label>
+						<CheckBox Content="{Binding Name}" IsChecked="{Binding FixedLayout}" />
+					</Label>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<tb:TaskbarIcon x:Name="myNotifyIcon"
+										IconSource="../Media/app.ico"
+										MenuActivation="LeftOrRightClick"
+										PopupActivation="DoubleClick"
+										ToolTipText="Fallback ToolTip for Windows xp"
+										TrayMouseDoubleClick="TrayDoubleClick"
+										Visibility="Visible">
+			<tb:TaskbarIcon.ContextMenu>
+				<ContextMenu>
+					<MenuItem Command="{Commands:CloseWindowCommand}"
+										CommandParameter="{Binding}"
+										Header="Close" />
+				</ContextMenu>
+			</tb:TaskbarIcon.ContextMenu>
+		</tb:TaskbarIcon>
+	</StackPanel>
+</Window>
