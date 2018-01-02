@@ -26,6 +26,14 @@ namespace ArtZilla.KBLFix.Views {
 			ViewModel = new MainWindowViewModel();
 		}
 
+		protected override void OnInitialized(EventArgs e) {
+			base.OnInitialized(e);
+			if (Environment.GetCommandLineArgs().Contains("-hide")) {
+				WindowState = WindowState.Minimized;
+				Hide();
+			}
+		}
+
 		protected override void OnStateChanged(EventArgs e) {
 			if (WindowState == WindowState.Minimized) {
 				Hide();
@@ -45,6 +53,9 @@ namespace ArtZilla.KBLFix.Views {
 				WindowState = _previous;
 			}
 		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+			=> ViewModel.IsVisible = WindowState == WindowState.Minimized;
 
 		private WindowState _previous = WindowState.Normal;
 	}

@@ -34,33 +34,49 @@ namespace ArtZilla.KBLFix.ViewModels {
 	public class MainWindowViewModel : ViewModel {
 		public IAppConfiguration Config { get; } = ConfigManager.GetRealtime<IAppConfiguration>();
 
-		public bool IsEnabled {
-			get => Config.IsEnabled;
+		public bool IsAutorun {
+			get => _autorun.IsEnabled();
 			set {
-				if (IsEnabled == value)
+				if (IsAutorun == value)
 					return;
-
-				Config.IsEnabled = value;
-				RaisePropertyChanged(nameof(IsEnabled));
+				_autorun.SetEnabled(value);
+				RaisePropertyChanged(nameof(IsAutorun));
 			}
 		}
 
 		public ObservableCollection<KeyboardLayoutViewModel> Layouts
 			=> new ObservableCollection<KeyboardLayoutViewModel>(_layouts);
 
+		public bool IsVisible {
+			get => _isVisible;
+			set {
+				if (IsVisible == value)
+					return;
+				_isVisible = value;
+				_repeater.Enabled(value);
+				RaisePropertyChanged(nameof(IsVisible));
+			}
+		}
+
 		public MainWindowViewModel() {
 			_layouts.AddRange(KeyboardLayout.Load().Select(l => new KeyboardLayoutViewModel(l)));
-			_repeater = new BackgroundRepeater(Update);
+			_repeater = new BackgroundRepeater(Update, TimeSpan.FromSeconds(3D), true);
 		}
 
 		private void Update() {
+			if (!IsVisible)
+				return;
+
 			if (HelpUtils.LoadLayouts().Distinct().Count() != _layouts.Count) {
+				_layouts.Clear();
 				_layouts.AddRange(KeyboardLayout.Load().Select(l => new KeyboardLayoutViewModel(l)));
 				RaisePropertyChanged(nameof(Layouts));
 			}
 		}
 
+		private bool _isVisible;
 		private readonly BackgroundRepeater _repeater;
+		private readonly AutorunManager _autorun = new AutorunManager("KBLFix", args: "-hide");
 		private readonly List<KeyboardLayoutViewModel> _layouts = new List<KeyboardLayoutViewModel>();
 	}
 }

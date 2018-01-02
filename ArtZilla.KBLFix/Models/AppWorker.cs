@@ -28,7 +28,7 @@ namespace ArtZilla.KBLFix.Models {
 
 		private void MainWork() {
 			var list = KeyboardLayout.Load().ToArray();
-			if (list.Length == 0)
+			if (list.Length < 2)
 				return;
 
 			foreach (var item in list) {

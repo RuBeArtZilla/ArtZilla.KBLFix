@@ -7,19 +7,28 @@
 				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				xmlns:tb="http://www.hardcodet.net/taskbar"
 				xmlns:vm="clr-namespace:ArtZilla.KBLFix.ViewModels"
+				Name="MainWnd"
 				Title="Фиксация раскладок"
 				Width="525"
 				Height="350"
 				d:DataContext="{d:DesignInstance vm:MainWindowViewModel, d:IsDesignTimeCreatable=True}"
+				IsVisibleChanged="OnIsVisibleChanged"
 				mc:Ignorable="d">
-	<StackPanel>
-		<ToggleButton Margin="8,4"
-									Padding="4,2"
-									HorizontalAlignment="Left"
-									Content="Фиксация"
-									IsChecked="{Binding IsEnabled}" />
 
-		<Label Content="Список раскладок:" />
+	<StackPanel>
+		<Label>
+			<CheckBox Content="Фиксация выделенных раскладок" IsChecked="{Binding Config.IsEnabled}" />
+		</Label>
+		<Label>
+			<CheckBox Content="Автоматический запуск при старте" IsChecked="{Binding IsAutorun}" />
+		</Label>
+		
+		<StackPanel Visibility="Collapsed">
+			<Label Content="Период между проверками:" />
+			
+		</StackPanel>
+
+		<Label Content="Текущий список раскладок:" />
 
 		<ItemsControl ItemsSource="{Binding Layouts}">
 			<ItemsControl.ItemTemplate>
@@ -41,7 +50,7 @@
 			<tb:TaskbarIcon.ContextMenu>
 				<ContextMenu>
 					<MenuItem Command="{Commands:CloseWindowCommand}"
-										CommandParameter="{Binding}"
+										CommandParameter="{Binding ElementName=MainWnd}"
 										Header="Close" />
 				</ContextMenu>
 			</tb:TaskbarIcon.ContextMenu>
